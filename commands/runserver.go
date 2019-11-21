@@ -6,16 +6,57 @@ import (
   "net/http"
   "log"
   "encoding/json"
+  "strconv"
 )
 
+// Pokemon : Pokemon custom struct
 type Pokemon struct {
   Number  string `json:"id"`
   Name    string `json:"name"`
 }
 
+
 var pokemonList []Pokemon
 
+
+func getAllPokemon(w http.ResponseWriter, r *http.Request) {
+  fmt.Printf("Returning all pokemon: %s", pokemonList)
+  w.Header().Set("Content-Type", "application/json")
+  json.NewEncoder(w).Encode(pokemonList)
+}
+
+
+func getPokemon(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/json")
+  params := mux.Vars(r)
+  for _, item := range pokemonList {
+    if item.Number == params["id"] {
+      json.NewEncoder(w).Encode(item)
+      return
+    }
+  }
+}
+
+
+func updatePokemon(w http.ResponseWriter, r *http.Request) {
+  // implement later
+}
+
+
+func deletePokemon(w http.ResponseWriter, r *http.Request) {
+  // implement later
+}
+
+
 func main() {
+  // populate pokemonList
+  pokemonList = append(
+    pokemonList,
+    Pokemon{Number: "1", Name: "Bulbasaur"},
+    Pokemon{Number: "4", Name: "Charmander"},
+    Pokemon{Number: "7", Name: "Squirtle"},
+  )
+
   r := mux.NewRouter()
 
   // endpionts
@@ -24,29 +65,9 @@ func main() {
   })
   r.HandleFunc("/pokemon", getAllPokemon).Methods("GET")
   r.HandleFunc("/pokemon/{id}", getPokemon).Methods("GET")
-  r.HandleFunc("/pokemon/", addPokemon).Methods("POST")
   r.HandleFunc("/pokemon/{id}", updatePokemon).Methods("POST")
   r.HandleFunc("/pokemon/{id}", deletePokemon).Methods("DELETE")
 
   fmt.Println("Server listening!")
   log.Fatal(http.ListenAndServe(":5000", r))
 }
-
-func getAllPokemon(w http.ResponseWriter, r *http.Request) {
-  w.Header().Set("Content-Type", "application/json")
-  json.NewEncoder(w).Encode(pokemonList)
-}
-
-func getPokemon(w http.ResponseWriter, r *http.Request) {
-}
-
-func addPokemon(w http.ResponseWriter, r *http.Request) {
-}
-
-func updatePokemon(w http.ResponseWriter, r *http.Request) {
-}
-
-func deletePokemon(w http.ResponseWriter, r *http.Request) {
-}
-
-
