@@ -6,7 +6,6 @@ import (
   "net/http"
   "log"
   "encoding/json"
-  "strconv"
 )
 
 // Pokemon : Pokemon custom struct
